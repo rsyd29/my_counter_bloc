@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:my_counter_bloc/blocs/counter/counter_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() {
   runApp(const MyApp());
@@ -9,13 +11,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'MyCounter Bloc',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return BlocProvider<CounterBloc>(
+      create: (context) => CounterBloc(),
+      child: MaterialApp(
+        title: 'MyCounter Bloc',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: const MyHomePage(),
       ),
-      home: const MyHomePage(),
     );
   }
 }
@@ -28,7 +33,7 @@ class MyHomePage extends StatelessWidget {
     return Scaffold(
       body: Center(
         child: Text(
-          '0',
+          '${context.watch<CounterBloc>().state.counter}',
           style: TextStyle(fontSize: 52.0),
         ),
       ),
@@ -36,13 +41,19 @@ class MyHomePage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           FloatingActionButton(
-            onPressed: () {},
+            onPressed: () {
+              BlocProvider.of<CounterBloc>(context)
+                  .add(IncrementCounterEvent());
+            },
             child: Icon(Icons.add),
             heroTag: 'Increment',
           ),
           SizedBox(width: 10.0),
           FloatingActionButton(
-            onPressed: () {},
+            onPressed: () {
+              BlocProvider.of<CounterBloc>(context)
+                  .add(DecrementCounterEvent());
+            },
             child: Icon(Icons.remove),
             heroTag: 'Decrement',
           )
